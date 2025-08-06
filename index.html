@@ -1,60 +1,75 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Upcoming Birthdays</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Birthday Reminder</title>
   <style>
     body {
       margin: 0;
+      padding: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom, #228B22, #013220);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
+      background-image: url('images.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
       min-height: 100vh;
-      padding: 20px;
+      color: white;
+      backdrop-filter: brightness(0.5);
     }
-    h1 {
-      margin-bottom: 20px;
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 15px;
+      margin-top: 60px;
     }
-    .birthday {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 10px 20px;
-      margin: 10px 0;
-      border-radius: 8px;
-      width: 100%;
-      max-width: 400px;
+
+    h1, h2 {
       text-align: center;
     }
-    #wishes {
-      margin-top: 40px;
-      width: 100%;
-      max-width: 400px;
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
       background: rgba(255, 255, 255, 0.1);
-      padding: 15px;
+      margin: 10px 0;
+      padding: 10px;
       border-radius: 8px;
     }
-    #wishes h2 {
-      margin-top: 0;
+
+    .no-birthday {
+      text-align: center;
+      margin-top: 30px;
+      font-style: italic;
+      font-size: 18px;
     }
-    .wish {
-      background: rgba(255, 255, 255, 0.15);
-      margin: 5px 0;
-      padding: 10px;
-      border-radius: 5px;
+
+    .wishes {
+      margin-top: 50px;
     }
   </style>
 </head>
 <body>
-  <h1>Upcoming Birthdays</h1>
-  <div id="birthdays"></div>  <div id="wishes">
-    <h2>Wishes</h2>
-    <div id="wishList">
-      <!-- Manual wishes will go here -->
+  <div class="container">
+    <h1>Upcoming Birthdays</h1>
+    <ul id="birthdayList"></ul>
+    <div class="no-birthday" id="noBirthdayMessage">No birthday update</div>
+
+    <div class="wishes">
+      <h2>Wishes</h2>
+      <ul id="wishesList">
+        <!-- Example: <li>Happy Birthday, Jessica! – From John</li> -->
+      </ul>
     </div>
-  </div>  <script>
+  </div>
+
+  <script>
     const birthdays = [
       { name: "Jessica Sachi", date: "2009-11-18" },
       { name: "Kusumo Wijaya", date: "2009-10-10" },
@@ -103,27 +118,28 @@
     ];
 
     const today = new Date();
-    const currentYear = today.getFullYear();
+    today.setHours(0, 0, 0, 0);
+    
+    const birthdayList = document.getElementById('birthdayList');
+    const noBirthdayMessage = document.getElementById('noBirthdayMessage');
 
     const upcoming = birthdays.filter(b => {
-      const bd = new Date(b.date);
-      bd.setFullYear(currentYear);
-      const diff = (bd - today) / (1000 * 60 * 60 * 24);
+      const birthDate = new Date(today.getFullYear(), new Date(b.date).getMonth(), new Date(b.date).getDate());
+      const diff = (birthDate - today) / (1000 * 60 * 60 * 24);
       return diff >= 0 && diff <= 3;
     });
 
-    const container = document.getElementById("birthdays");
-    if (upcoming.length === 0) {
-      container.innerHTML = "<p>No birthday update</p>";
-    } else {
+    if (upcoming.length > 0) {
+      noBirthdayMessage.style.display = 'none';
       upcoming.sort((a, b) => new Date(a.date).getDate() - new Date(b.date).getDate());
-      upcoming.forEach(b => {
-        const div = document.createElement("div");
-        div.className = "birthday";
-        const date = new Date(b.date);
-        div.textContent = `${b.name} — ${date.getDate()} ${date.toLocaleString('default', { month: 'long' })}`;
-        container.appendChild(div);
+      upcoming.forEach(person => {
+        const item = document.createElement('li');
+        item.textContent = `${person.name} – ${new Date(person.date).toLocaleDateString('en-GB', {
+          day: 'numeric', month: 'long'
+        })}`;
+        birthdayList.appendChild(item);
       });
     }
-  </script></body>
-  </html>
+  </script>
+</body>
+</html>
